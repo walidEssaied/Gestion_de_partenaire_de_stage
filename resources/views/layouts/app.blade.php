@@ -20,6 +20,11 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <script>
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#myInput').trigger('focus')
+        })
+    </script>
 </head>
 <body>
     <div id="app">
@@ -69,10 +74,9 @@
                         <li class="nav-item">
                             <a href="" class="nav-link">Contact</a>
                         </li>
-                     @endadmin   
+                    @endadmin   
                 </ul>
-            @endauth
-
+            @endauth    
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->

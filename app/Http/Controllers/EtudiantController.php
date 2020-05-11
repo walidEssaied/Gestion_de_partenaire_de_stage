@@ -15,8 +15,9 @@ class EtudiantController extends Controller
      */
     public function index()
     {
-       $etudiant=Etudiant::all();
-       return etudiants ;
+        $page_name = 'etudiant';
+        $data = Etudiant::all();
+        return view('etudiant.index',compact('data','page_name'));
     }
 
     /**
@@ -26,7 +27,8 @@ class EtudiantController extends Controller
      */
     public function create()
     {
-        //
+        return view('etudiant.create');
+
     }
 
     /**
@@ -37,7 +39,29 @@ class EtudiantController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validated([
+            'cin' => 'required',
+            'Nom' =>'required','string',
+            'Prenom' =>'required','string',
+            'tel' => 'required',
+            'Adresse' =>'required','string',
+            'email' => 'required','email:rfc,dns',
+            'niveau' =>'required','string']);
+        $etudiant= new etudiant;
+        $etudiant->id = Auth::id();
+        $etudiant->cin = $request->cin;
+        $etudiant->Nom = $request->Nom;
+        $etudiant->Prenom = $request->Prenom;
+        $etudiant->tel = $request->tel;
+        $etudiant->Adresse = $request->Adresse;
+        $etudiant->email = $request->email;
+        $etudiant->niveau = $request->niveau;
+
+        $etudiant->save();
+
+      Mail::to(Auth::user()->email)->send(new Newetudiant($etudiant));
+
+        return redirect()->route('etudiant.index')->with('addetudiant','New etudiant added successfully');
     }
 
     /**
@@ -48,7 +72,7 @@ class EtudiantController extends Controller
      */
     public function show(etudiant $etudiant)
     {
-        //
+        return view('etudiant.show')->with('etudiant', $etudiant);
     }
 
     /**
@@ -59,7 +83,7 @@ class EtudiantController extends Controller
      */
     public function edit(etudiant $etudiant)
     {
-        //
+        return view ('etudiant.edit',compact('etudiant'));
     }
 
     /**
@@ -71,8 +95,11 @@ class EtudiantController extends Controller
      */
     public function update(Request $request, etudiant $etudiant)
     {
-        //
+       $validatedata - $request->validate($this->validationRules());
+       $etudiant->update($validatedata);
+       return redirect()->route('etudiant.show'.$etudiant->id)->with('updateEtudiant'. 'Etudiant update successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -82,6 +109,21 @@ class EtudiantController extends Controller
      */
     public function destroy(etudiant $etudiant)
     {
-        //
+        $etudiant -> delete();
+        return redirect()->route('etudiant.index')->with('deleteEtudiant'. 'Etudiant delete successfully');
+
+
     }
-}
+    private function validationRules()
+    {
+        return [
+            'cin' => 'required',
+            'nom' => 'required',
+            'prenom' => 'required',
+            'adresse' => 'required',
+            'tel' => 'required',
+            'email' => 'required',
+            'niveau' => 'required',
+            'idsociete' => 'required',
+        ];
+}   } 
